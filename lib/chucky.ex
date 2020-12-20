@@ -3,28 +3,25 @@ defmodule Chucky do
   require Logger
 
   def start(type, _args) do
-    import Supervisor.Spec
-    children = [
-      worker(Chucky.Server, [])
-    ]
+    children = [%{id: Chucky.Server, start: {Chucky.Server, :start_link, []}}]
 
-  case type do
-    :normal ->
-      Logger.info("Application is started on #{node}")
+    this_node = node()
 
-    {:takeover, old_node} ->
-      Logger.info("#{node} is taking over #{old_node}")
+    case type do
+      :normal ->
+        Logger.info("OTP application `chucky` is started on #{this_node}")
 
-    {:failover, old_node} ->
-      Logger.info("#{old_node} is failing over to #{node}")
+      {:takeover, old_node} ->
+        Logger.info(
+          "#{this_node} is taking over #{old_node} and starting OTP application `chucky`"
+        )
+
+      {:failover, old_node} ->
+        Logger.info("#{old_node} is failing over to #{this_node}")
+    end
+
+    Supervisor.start_link(children, strategy: :one_for_one, name: {:global, Chucky.Supervisor})
   end
 
-  opts = [strategy: :one_for_one, name: {:global, Chucky.Supervisor}]
-  Supervisor.start_link(children, opts)
-  end
-
-  def fact do
-    Chucky.Server.fact
-  end
-
+  def fact, do: Chucky.Server.fact()
 end

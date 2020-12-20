@@ -1,3 +1,5 @@
+A slightly modernized version of the a codebase from book The Little Elixir & OTP Guidebook demonstrating failover and takeover of an OTP app in an Erlang cluster.
+
 # Chucky - A Distributed and Fault-Tolerant Chuck Norris Facts Disher
 
 ![Chuck](http://i.imgur.com/wwFsWiA.jpg)
@@ -6,7 +8,7 @@
 
 ```
 % hostname -s
-imac
+pentium
 ```
 
 ## Step 2: Configure `config/NODE_NAME.config`
@@ -15,11 +17,11 @@ Here's an example:
 
 ```elixir
 [{kernel,
-  [{distributed, 
+  [{distributed,
     [{chucky,
       5000,
-      ['a@imac', {'b@imac', 'c@imac'}]}]},
-   {sync_nodes_mandatory, ['b@imac', 'c@imac']},
+      ['a@pentium', {'b@pentium', 'c@pentium'}]}]},
+   {sync_nodes_mandatory, ['b@pentium', 'c@pentium']},
    {sync_nodes_timeout, 30000}
   ]}].
 ```
